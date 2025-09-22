@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyberpunk Login Portal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --neon-blue: #00d4ff;
+            --neon-pink: #ff007f;
+            --neon-green: #00ff41;
+            --cyber-dark: #0a0014;
+            --cyber-darker: #050008;
+            --cyber-purple: #1a0033;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+        }
+
+        body {
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(135deg, var(--cyber-dark), var(--cyber-darker));
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Matrix Background Animation */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.1;
+        }
+
+        /* Scan Lines Effect */
+        .scan-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 65, 0.03) 2px,
+                rgba(0, 255, 65, 0.03) 4px
+            );
+            animation: scan 2s linear infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+
+        /* Background Particles */
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        }
+
+        /* Main Container */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Login Card */
+        .login-card {
+            background: rgba(26, 0, 51, 0.9);
+            border: 2px solid var(--neon-blue);
+            border-radius: 10px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 
+                0 0 20px rgba(0, 212, 255, 0.3),
+                inset 0 0 20px rgba(0, 212, 255, 0.1);
+            backdrop-filter: blur(10px);
+            animation: card-glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes card-glow {
+            0% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3), inset 0 0 20px rgba(0, 212, 255, 0.1); }
+            100% { box-shadow: 0 0 30px rgba(255, 0, 127, 0.4), inset 0 0 30px rgba(255, 0, 127, 0.1); }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        .logo::before {
+            content: '⚡';
+            font-size: 24px;
+            color: black;
+            font-weight: bold;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            animation: title-glitch 4s ease-in-out infinite;
+        }
+
+        @keyframes title-glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--neon-blue);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Button Styles */
+        .cyber-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+            border: none;
+            border-radius: 5px;
+            color: black;
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
+        }
+
+        .cyber-button:active {
+            transform: scale(0.98);
+        }
+
+        .cyber-button.loading {
+            background: linear-gradient(45deg, var(--text-secondary), var(--text-secondary));
+            cursor: not-allowed;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid black;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .cyber-button.loading .loading-spinner {
+            display: inline-block;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .status-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        .status-dot:nth-child(2) { animation-delay: 0.5s; }
+        .status-dot:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .alert.success {
+            background: rgba(0, 255, 65, 0.2);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+        }
+
+        .alert.error {
+            background: rgba(255, 0, 127, 0.2);
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .title {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Background -->
+    <canvas class="matrix-bg" id="matrixCanvas"></canvas>
+    
+    <!-- Scan Lines -->
+    <div class="scan-lines"></div>
+    
+    <!-- Background Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="login-card">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo"></div>
+                <h1 class="title">Access Terminal</h1>
+                <p class="subtitle">Secure Connection Required</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div class="alert" id="alert"></div>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="username">👤 User ID</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        class="form-input" 
+                        placeholder="Enter username..."
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">🔒 Access Code</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-input" 
+                        placeholder="Enter password..."
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="cyber-button" id="loginButton">
+                    <span class="loading-spinner"></span>
+                    <span class="button-text">Initialize Connection</span>
+                </button>
+            </form>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p class="footer-text">Secure Connection Established</p>
+                <div class="status-indicators">
+                    <div class="status-dot"></div>
+                    <div class="status-dot"></div>
+                    <div class="status-dot"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Background Animation
+        function initMatrix() {
+            const canvas = document.getElementById('matrixCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            const charArray = chars.split('');
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+
+            for (let i = 0; i < columns; i++) {
+                drops[i] = 1;
+            }
+
+            function draw() {
+                ctx.fillStyle = 'rgba(10, 0, 20, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#00ff41';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = charArray[Math.floor(Math.random() * charArray.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            setInterval(draw, 35);
+        }
+
+        // Create Background Particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Show Alert Message
+        function showAlert(message, type = 'error') {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        // Handle Form Submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const button = document.getElementById('loginButton');
+            const buttonText = document.querySelector('.button-text');
+
+            // Validation
+            if (!username || !password) {
+                showAlert('Please enter both username and password', 'error');
+                return;
+            }
+
+            // Show loading state
+            button.classList.add('loading');
+            buttonText.textContent = 'Connecting...';
+            button.disabled = true;
+
+            // Simulate login process
+            setTimeout(() => {
+                // Reset button state
+                button.classList.remove('loading');
+                button.disabled = false;
+                buttonText.textContent = 'Initialize Connection';
+
+                // Simulate authentication
+                if (username === 'admin' && password === 'cyber123') {
+                    showAlert('Access Granted! Welcome to the mainframe.', 'success');
+                    
+                    // Simulate redirect after successful login
+                    setTimeout(() => {
+                        showAlert('Redirecting to secure area...', 'success');
+                    }, 2000);
+                } else {
+                    showAlert('Access Denied! Invalid credentials.', 'error');
+                }
+            }, 2000);
+        });
+
+        // Add input focus effects
+        const inputs = document.querySelectorAll('.form-input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Handle window resize for matrix
+        window.addEventListener('resize', function() {
+            const canvas = document.getElementById('matrixCanvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Enter key to submit form
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+            
+            // Escape key to clear form
+            if (e.key === 'Escape') {
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('username').focus();
+            }
+        });
+
+        // Initialize everything when page loads
+        window.addEventListener('load', function() {
+            initMatrix();
+            createParticles();
+            
+            // Focus on username field
+            document.getElementById('username').focus();
+            
+            // Demo credentials hint
+            setTimeout(() => {
+                showAlert('Demo: Try username "admin" and password "cyber123"', 'success');
+            }, 1000);
+        });
+
+        // Add some interactivity to the logo
+        document.querySelector('.logo').addEventListener('click', function() {
+            this.style.animation = 'none';
+            setTimeout(() => {
+                this.style.animation = 'pulse 2s ease-in-out infinite';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
